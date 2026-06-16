@@ -17,25 +17,35 @@ class Solution {
     static List<List<Integer>> res;
     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
         res = new ArrayList<>();
-        solveLvl(root, 0);
-
-        return res;
+        return solveLvl(root);
     }
 
-    public static void solveLvl(TreeNode root,int level){
-        if(root == null)return;
+    public static List<List<Integer>> solveLvl(TreeNode root){
+        if(root == null)return new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
+        boolean leftToRight = true;
 
-        if(res.size() == level)res.add(new ArrayList<>());
+        while(!q.isEmpty()){
+            int lvl = q.size();
+            List<Integer> level = new ArrayList<>();
 
-        if(level % 2 == 0){
-           res.get(level).add(root.val);
+            for(int i = 0; i < lvl; i++){
+               TreeNode curr = q.poll();
+               level.add(curr.val);
+
+                if(curr.left != null)q.offer(curr.left);
+                if(curr.right != null)q.offer(curr.right);
+            }
+
+            if(!leftToRight){
+                Collections.reverse(level);
+            }
+
+            res.add(level);
+            leftToRight = !leftToRight;
         }
-        else{
-            res.get(level).add(0,root.val);
-        }
 
-
-        solveLvl(root.left, level + 1);
-        solveLvl(root.right,level + 1);
+        return res;
     }
 }
